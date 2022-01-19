@@ -1,5 +1,4 @@
-import io.appium.java_client.MobileBy;
-import io.appium.java_client.TouchAction;
+import Invoke.apk_invoke;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.android.nativekey.AndroidKey;
@@ -7,13 +6,14 @@ import io.appium.java_client.android.nativekey.KeyEvent;
 import org.testng.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import pageObject.CheckoutPage;
 import pageObject.FormPage;
 import pageObject.addProduct;
 import utility.Scroll;
 
-import javax.swing.plaf.synth.SynthEditorPaneUI;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,10 +112,15 @@ public class app_testing extends apk_invoke {
         driver.context(contextList.get(0));
     }
 
+    @BeforeTest
+    public void startAppiumServer() throws IOException {
+        Runtime.getRuntime().exec("taskkill /F /IM node.exe");
+        service = startServer();
+    }
     @Test
     public void totalTest() throws IOException, InterruptedException {
 
-        service = startServer();
+
         AndroidDriver<AndroidElement> driver = capabilities("AppName");
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         signIn(driver);
@@ -123,8 +128,13 @@ public class app_testing extends apk_invoke {
         addParticularProduct(driver, "Air Jordan 4 Retro");
         validation(driver);
         switchContext(driver);
-        service.stop();
 
+
+    }
+    @AfterTest
+    public void stopAppiumServer()
+    {
+        service.stop();
     }
 }
 
